@@ -1,0 +1,41 @@
+/**
+ *Copyright (C) 2017 Mehmet Akif Petek
+ *
+ *This file is part of webstack.
+ *
+ *webstack is free software: you can redistribute it and/or modify
+ *it under the terms of the GNU General Public License as published by
+ *the Free Software Foundation, either version 3 of the License, or
+ *(at your option) any later version.
+ *
+ *webstack is distributed in the hope that it will be useful,
+ *but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *GNU General Public License for more details.
+ *
+ *You should have received a copy of the GNU General Public License
+ *along with webstack.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+
+
+section.page {
+    display: table;
+    width: 100vw;
+    min-height: 100vh;
+    position: fixed;
+    top: 0;
+    left:0;
+    opacity: 0;
+}
+
+.inner-page {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+
+    padding: 50px;
+    color: #FFF;
+    font-family: 'Raleway', sans-serif;
+}

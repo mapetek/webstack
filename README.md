@@ -1,2 +1,2 @@
 # webstack
-stack style website
+Stack style website example
