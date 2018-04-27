@@ -35,7 +35,9 @@ function defaultScroll(margin) {
 
 function prevPage() {
 
-    if(currentPage === 0) return;
+    if(currentPage === 0) { 
+        return; 
+    }
 
     previousPage = currentPage;
 
@@ -48,8 +50,8 @@ function prevPage() {
 
 function nextPage() {
 
-    if(currentPage === totalPages - 1) {
-        return;
+    if(currentPage === totalPages - 1) { 
+        return; 
     }
 
     previousPage = currentPage;
@@ -62,6 +64,7 @@ function nextPage() {
 }
 
 function showActivePage() {
+    var $oldPage, newPage;
     $oldPage = $($("section").get(previousPage));
     $newPage = $($("section").get(currentPage));
 
@@ -258,7 +261,7 @@ $(function() {
 
     $("html, body").on("DOMMouseScroll mousewheel scroll touchmove", function(event) {
 
-        var normalizedWheel = normalizeWheel(event)
+        var normalizedWheel = normalizeWheel(event);
 
         if (isDelayMode == true)
         {
@@ -276,19 +279,6 @@ $(function() {
             currentSectionHeight = $(currentSection).find(".container").outerHeight(),
             minScrollToSlide = (window.isFirefox && window.isWindows) ? 200 : window.minScrollToSlide;
 
-//        console.log(scrollsize, browserScrollRate, OSScrollRate, wheelDelta, energy, scrollDirection, curSecScrolltop, currentSectionHeight);
-
-        // var a = e.originalEvent.detail ? e.originalEvent.detail : e.originalEvent.deltaY
-        // if(a == undefined)
-        //     a = e.originalEvent.wheelDelta
-        //
-        //
-        //             if(window.isMSIE) {
-        //                     console.log("Internet Explorer" + a)
-        //             }
-
-        //console.log((event.originalEvent.wheelDelta) ? event.originalEvent.wheelDelta : event.deltaY * event.deltaFactor)
-
         var scrollAmount = 0,
             scrollDirection = "";
 
@@ -303,19 +293,13 @@ $(function() {
         if(window.isFirefox) {
             scrollAmount = Math.abs(normalizedWheel.pixelY)
             scrollDirection = normalizedWheel.pixelY < 0 ? 1 : -1
-            console.log(normalizedWheel.pixelY, scrollDirection)
         }
 
         var scrollDelta = scrollAmount * scrollDirection;
 
-//        console.log(scrollAmount, scrollDirection);
-//        console.log(scrollDelta)
-
         var viewHeight = parseInt($("html, body").css("height")),
             activePageHeight = parseInt($("section.active").css("height")),
             activePageMargin = parseInt($("section.active").css("marginTop"));
-
-        //console.log("ScrollDelta =>", scrollDelta, "WheelDelta", wheelDelta)
 
         if (activePageHeight <= viewHeight) {
             event.preventDefault();
@@ -356,8 +340,6 @@ $(function() {
                     }
                 }
             }
-            // console.log(activePageMargin + " + " + activePageHeight + "(" + (activePageMargin + activePageHeight) + ")" + " > " + viewHeight)
         }
-
     });
 });
