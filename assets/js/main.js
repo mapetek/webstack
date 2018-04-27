@@ -17,13 +17,13 @@
 // 
 
 
-var previousPage = 0
-var currentPage = 0
-var totalPages = 0
-var isDelayMode = false
-var SCROLL_TRESHOLD = 300
-var KEYBOARD_SCROLL_AMOUNT = 50
-var TRANSITION = "fade"
+var previousPage = 0;
+var currentPage = 0;
+var totalPages = 0;
+var isDelayMode = false;
+var SCROLL_TRESHOLD = 300;
+var KEYBOARD_SCROLL_AMOUNT = 50;
+var TRANSITION = "fade";
 
 
 //$(document).ready(function() {
@@ -31,9 +31,9 @@ var TRANSITION = "fade"
 //Short of document ready
 $(function() {
 
-    totalPages = $('section').length
-    orderPages()
-    showActivePage()
+    totalPages = $('section').length;
+    orderPages();
+    showActivePage();
 
     var $html = $('html');
 
@@ -96,14 +96,14 @@ $(function() {
 
     if(window.isOSX)
     {
-        SCROLL_TRESHOLD = 200
+        SCROLL_TRESHOLD = 200;
     }
 
 
     $('body').on('keydown', function(event) {
 
         if (isDelayMode) {
-            return
+            return;
         }
 
         var keyCode = event.which,
@@ -150,7 +150,7 @@ $(function() {
                     }
                     else if (activePageMargin + activePageHeight > viewHeight)
                     {
-                        nextPage()
+                        nextPage();
                     }
                     else
                     {
@@ -181,6 +181,84 @@ $(function() {
 
     //var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel" //FF doesn't recognize mousewheel as of FF3.x
 
+    function defaultScroll(margin) {
+        $('section.active').css('marginTop', margin);
+        // $('section.active').stop().animate({
+        //     marginTop: margin + "px"
+        // }, 500);
+    }
+
+    function prevPage() {
+
+        if(currentPage == 0) return;
+
+        previousPage = currentPage;
+
+        currentPage--;
+        currentPage = currentPage < 0 ? totalPages - 1 : currentPage;
+        console.log('PAGE -> ' + currentPage);
+
+        showActivePage();
+
+        delayScroll();
+    }
+
+    function nextPage() {
+
+        if(currentPage == totalPages - 1) return;
+
+        previousPage = currentPage;
+
+        currentPage++;
+        currentPage = currentPage > totalPages - 1 ? 0 : currentPage;
+        console.log('PAGE -> ' + currentPage);
+
+        showActivePage();
+
+        delayScroll();
+    }
+
+    function showActivePage() {
+        $oldPage = $($('section').get(previousPage))
+        $newPage = $($('section').get(currentPage))
+
+        orderPages()
+        $newPage.css('marginTop', 0)
+        $newPage.css('zIndex', 100)
+
+        $oldPage.animate({
+            opacity: 0
+        }, 500)
+        $oldPage.removeClass('active')
+        $newPage.animate({
+            opacity: 1
+        }, 500)
+        $newPage.addClass('active')
+    }
+
+    function orderPages() {
+        $('section').each(function(index) {
+            console.log(index);
+            $(this).css('zIndex', 99 - index);
+        })
+    }
+
+    function delayScroll() {
+        isDelayMode = true;
+        setTimeout(function() {
+            isDelayMode = false;
+        }, 1000);
+    }
+
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
     $('html, body').on("DOMMouseScroll mousewheel scroll touchmove", function(event) {
 
         var normalizedWheel = normalizeWheel(event)
@@ -188,7 +266,7 @@ $(function() {
         if (isDelayMode == true)
         {
             event.preventDefault()
-            return
+            return;
         }
 
         var scrollsize = Math.ceil(Math.abs(event.deltaY) * event.deltaFactor),
@@ -285,82 +363,4 @@ $(function() {
         }
 
     });
-
-    function defaultScroll(margin) {
-        $('section.active').css('marginTop', margin);
-        // $('section.active').stop().animate({
-        //     marginTop: margin + "px"
-        // }, 500);
-    }
-
-    function prevPage() {
-
-        if(currentPage == 0) return
-
-        previousPage = currentPage;
-
-        currentPage--;
-        currentPage = currentPage < 0 ? totalPages - 1 : currentPage;
-        console.log('PAGE -> ' + currentPage);
-
-        showActivePage();
-
-        delayScroll();
-    }
-
-    function nextPage() {
-
-        if(currentPage == totalPages - 1) return
-
-        previousPage = currentPage;
-
-        currentPage++;
-        currentPage = currentPage > totalPages - 1 ? 0 : currentPage;
-        console.log('PAGE -> ' + currentPage);
-
-        showActivePage();
-
-        delayScroll();
-    }
-
-    function showActivePage() {
-        $oldPage = $($('section').get(previousPage))
-        $newPage = $($('section').get(currentPage))
-
-        orderPages()
-        $newPage.css('marginTop', 0)
-        $newPage.css('zIndex', 100)
-
-        $oldPage.animate({
-            opacity: 0
-        }, 500)
-        $oldPage.removeClass('active')
-        $newPage.animate({
-            opacity: 1
-        }, 500)
-        $newPage.addClass('active')
-    }
-
-    function orderPages() {
-        $('section').each(function(index) {
-            console.log(index);
-            $(this).css('zIndex', 99 - index);
-        })
-    }
-
-    function delayScroll() {
-        isDelayMode = true;
-        setTimeout(function() {
-            isDelayMode = false;
-        }, 1000);
-    }
-
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
 });
