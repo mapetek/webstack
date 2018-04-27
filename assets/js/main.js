@@ -25,17 +25,92 @@ var SCROLL_TRESHOLD = 300;
 var KEYBOARD_SCROLL_AMOUNT = 50;
 var TRANSITION = "fade";
 
+// Functions
+function defaultScroll(margin) {
+    $("section.active").css("marginTop", margin);
+    // $("section.active").stop().animate({
+    //     marginTop: margin + "px"
+    // }, 500);
+}
+
+function prevPage() {
+
+    if(currentPage === 0) return;
+
+    previousPage = currentPage;
+
+    currentPage--;
+    currentPage = currentPage < 0 ? totalPages - 1 : currentPage;
+
+    showActivePage();
+    delayScroll();
+}
+
+function nextPage() {
+
+    if(currentPage === totalPages - 1) {
+        return;
+    }
+
+    previousPage = currentPage;
+
+    currentPage++;
+    currentPage = currentPage > totalPages - 1 ? 0 : currentPage;
+
+    showActivePage();
+    delayScroll();
+}
+
+function showActivePage() {
+    $oldPage = $($("section").get(previousPage));
+    $newPage = $($("section").get(currentPage));
+
+    orderPages()
+    $newPage.css("marginTop", 0);
+    $newPage.css("zIndex", 100);
+
+    $oldPage.animate({
+        opacity: 0
+    }, 500);
+    $oldPage.removeClass("active");
+    $newPage.animate({
+        opacity: 1
+    }, 500);
+    $newPage.addClass("active");
+}
+
+function orderPages() {
+    $("section").each(function(index) {
+        $(this).css("zIndex", 99 - index);
+    })
+}
+
+function delayScroll() {
+    isDelayMode = true;
+    setTimeout(function() {
+        isDelayMode = false;
+    }, 1000);
+}
+
+function getRandomColor() {
+    var letters = "0123456789ABCDEF";
+    var color = "#";
+    for (var i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+// =========
 
 //$(document).ready(function() {
-//});
 //Short of document ready
 $(function() {
 
-    totalPages = $('section').length;
+    totalPages = $("section").length;
     orderPages();
     showActivePage();
 
-    var $html = $('html');
+    var $html = $("html");
 
     //Test Device
     window.isMobile = false;
@@ -45,53 +120,53 @@ $(function() {
 
     //Detect Mobile
     if (window.isMobile) {
-        $html.addClass('mobile');
+        $html.addClass("mobile");
     }
 
     //Detect Browser
-    window.isFirefox = navigator.userAgent.toLowerCase().indexOf('firefox') > -1;
+    window.isFirefox = navigator.userAgent.toLowerCase().indexOf("firefox") > -1;
     window.isSafari = /^((?!chrome).)*safari/i.test(navigator.userAgent);
     window.isChrome = /chrom(e|ium)/.test(navigator.userAgent.toLowerCase());
-    window.isChromeiOS = navigator.userAgent.match('CriOS');
-    window.isMSIE = navigator.userAgent.match('MSIE');
+    window.isChromeiOS = navigator.userAgent.match("CriOS");
+    window.isMSIE = navigator.userAgent.match("MSIE");
     window.isAndroid = navigator.userAgent.toLowerCase().indexOf("android") > -1;
     window.isiPad = navigator.userAgent.match(/iPad/i) !== null;
 
     //Detect OS
-    window.isWindows = navigator.platform.toUpperCase().indexOf('WIN') !== -1;
-    window.isOSX = navigator.platform.toUpperCase().indexOf('MAC') !== -1;
-    window.isLinux = navigator.platform.toUpperCase().indexOf('LINUX') !== -1;
+    window.isWindows = navigator.platform.toUpperCase().indexOf("WIN") !== -1;
+    window.isOSX = navigator.platform.toUpperCase().indexOf("MAC") !== -1;
+    window.isLinux = navigator.platform.toUpperCase().indexOf("LINUX") !== -1;
 
     //Prepare for CSS Fixes
     if (window.isSafari) {
-        $html.addClass('safari');
+        $html.addClass("safari");
     }
     if (window.isFirefox) {
-        $html.addClass('firefox');
+        $html.addClass("firefox");
     }
     if (window.isChrome) {
-        $html.addClass('chrome');
+        $html.addClass("chrome");
     }
     if (window.isMSIE) {
-        $html.addClass('msie');
+        $html.addClass("msie");
     }
     if (window.isAndroid) {
-        $html.addClass('android');
+        $html.addClass("android");
     }
     if (window.isWindows) {
-        $html.addClass('windows');
+        $html.addClass("windows");
     }
     if (window.isOSX) {
-        $html.addClass('osx');
+        $html.addClass("osx");
     }
     if (window.isLinux) {
-        $html.addClass('linux');
+        $html.addClass("linux");
     }
 
     //Retina
-    window.isRetina = ((window.matchMedia && (window.matchMedia('only screen and (min-resolution: 124dpi), only screen and (min-resolution: 1.3dppx), only screen and (min-resolution: 48.8dpcm)').matches || window.matchMedia('only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 2.6/2), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (min-device-pixel-ratio: 1.3)').matches)) || (window.devicePixelRatio && window.devicePixelRatio > 1.3));
+    window.isRetina = ((window.matchMedia && (window.matchMedia("only screen and (min-resolution: 124dpi), only screen and (min-resolution: 1.3dppx), only screen and (min-resolution: 48.8dpcm)").matches || window.matchMedia("only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 2.6/2), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (min-device-pixel-ratio: 1.3)").matches)) || (window.devicePixelRatio && window.devicePixelRatio > 1.3));
 
-    if (window.isRetina){$html.addClass('retina');}
+    if (window.isRetina){$html.addClass("retina");}
     //=======
 
     if(window.isOSX)
@@ -100,16 +175,16 @@ $(function() {
     }
 
 
-    $('body').on('keydown', function(event) {
+    $("body").on("keydown", function(event) {
 
         if (isDelayMode) {
             return;
         }
 
         var keyCode = event.which,
-            viewHeight = parseInt($('html, body').css('height')),
-            activePageHeight = parseInt($('section.active').css('height')),
-            activePageMargin = parseInt($('section.active').css('marginTop'));
+            viewHeight = parseInt($("html, body").css("height")),
+            activePageHeight = parseInt($("section.active").css("height")),
+            activePageMargin = parseInt($("section.active").css("marginTop"));
 
         if (activePageHeight <= viewHeight)
         {
@@ -165,9 +240,9 @@ $(function() {
 
     $(window).resize(function() {
 
-        var viewHeight = parseInt($('html, body').css('height')),
-            activePageHeight = parseInt($('section.active').css('height')),
-            activePageMargin = parseInt($('section.active').css('marginTop'));
+        var viewHeight = parseInt($("html, body").css("height")),
+            activePageHeight = parseInt($("section.active").css("height")),
+            activePageMargin = parseInt($("section.active").css("marginTop"));
 
         if (activePageMargin > 0) {
             defaultScroll(0);
@@ -179,87 +254,9 @@ $(function() {
         }
     })
 
-    //var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel" //FF doesn't recognize mousewheel as of FF3.x
+    //var mousewheelevt=(/Firefox/i.test(navigator.userAgent))? "DOMMouseScroll" : "mousewheel" //FF doesn"t recognize mousewheel as of FF3.x
 
-    function defaultScroll(margin) {
-        $('section.active').css('marginTop', margin);
-        // $('section.active').stop().animate({
-        //     marginTop: margin + "px"
-        // }, 500);
-    }
-
-    function prevPage() {
-
-        if(currentPage == 0) return;
-
-        previousPage = currentPage;
-
-        currentPage--;
-        currentPage = currentPage < 0 ? totalPages - 1 : currentPage;
-        console.log('PAGE -> ' + currentPage);
-
-        showActivePage();
-
-        delayScroll();
-    }
-
-    function nextPage() {
-
-        if(currentPage == totalPages - 1) return;
-
-        previousPage = currentPage;
-
-        currentPage++;
-        currentPage = currentPage > totalPages - 1 ? 0 : currentPage;
-        console.log('PAGE -> ' + currentPage);
-
-        showActivePage();
-
-        delayScroll();
-    }
-
-    function showActivePage() {
-        $oldPage = $($('section').get(previousPage))
-        $newPage = $($('section').get(currentPage))
-
-        orderPages()
-        $newPage.css('marginTop', 0)
-        $newPage.css('zIndex', 100)
-
-        $oldPage.animate({
-            opacity: 0
-        }, 500)
-        $oldPage.removeClass('active')
-        $newPage.animate({
-            opacity: 1
-        }, 500)
-        $newPage.addClass('active')
-    }
-
-    function orderPages() {
-        $('section').each(function(index) {
-            console.log(index);
-            $(this).css('zIndex', 99 - index);
-        })
-    }
-
-    function delayScroll() {
-        isDelayMode = true;
-        setTimeout(function() {
-            isDelayMode = false;
-        }, 1000);
-    }
-
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
-    }
-
-    $('html, body').on("DOMMouseScroll mousewheel scroll touchmove", function(event) {
+    $("html, body").on("DOMMouseScroll mousewheel scroll touchmove", function(event) {
 
         var normalizedWheel = normalizeWheel(event)
 
@@ -276,7 +273,7 @@ $(function() {
             energy = wheelDelta * browserScrollRate * OSScrollRate,
             scrollDirection = (event.deltaY >= 0) ? "up" : "down",
             curSecScrolltop = $(currentSection).scrollTop(),
-            currentSectionHeight = $(currentSection).find('.container').outerHeight(),
+            currentSectionHeight = $(currentSection).find(".container").outerHeight(),
             minScrollToSlide = (window.isFirefox && window.isWindows) ? 200 : window.minScrollToSlide;
 
 //        console.log(scrollsize, browserScrollRate, OSScrollRate, wheelDelta, energy, scrollDirection, curSecScrolltop, currentSectionHeight);
@@ -287,15 +284,15 @@ $(function() {
         //
         //
         //             if(window.isMSIE) {
-        //                     console.log('Internet Explorer' + a)
+        //                     console.log("Internet Explorer" + a)
         //             }
 
         //console.log((event.originalEvent.wheelDelta) ? event.originalEvent.wheelDelta : event.deltaY * event.deltaFactor)
 
         var scrollAmount = 0,
-            scrollDirection = '';
+            scrollDirection = "";
 
-        var currentSection = $('.page.current .content'),
+        var currentSection = $(".page.current .content"),
             scrollAmount = Math.abs(Math.round(event.originalEvent.deltaY)),
             scrollDirection = (event.originalEvent.deltaY >= 0) ? -1 : 1;
 
@@ -314,11 +311,11 @@ $(function() {
 //        console.log(scrollAmount, scrollDirection);
 //        console.log(scrollDelta)
 
-        var viewHeight = parseInt($('html, body').css('height')),
-            activePageHeight = parseInt($('section.active').css('height')),
-            activePageMargin = parseInt($('section.active').css('marginTop'));
+        var viewHeight = parseInt($("html, body").css("height")),
+            activePageHeight = parseInt($("section.active").css("height")),
+            activePageMargin = parseInt($("section.active").css("marginTop"));
 
-        //console.log('ScrollDelta =>', scrollDelta, 'WheelDelta', wheelDelta)
+        //console.log("ScrollDelta =>", scrollDelta, "WheelDelta", wheelDelta)
 
         if (activePageHeight <= viewHeight) {
             event.preventDefault();
