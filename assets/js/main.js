@@ -16,7 +16,6 @@
 // along with webstack.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
-
 var previousPage = 0;
 var currentPage = 0;
 var totalPages = 0;
